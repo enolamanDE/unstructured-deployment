@@ -1,22 +1,17 @@
 # ============================================
-# Stage 1: Basis - Offizielles Unstructured Image
+# Basis: Offizielles Unstructured Image
+# (Enthält bereits unstructured mit allen Dependencies)
 # ============================================
-FROM downloads.unstructured.io/unstructured-io/unstructured:latest AS unstructured-base
-
-# ============================================
-# Stage 2: Anwendung - Streamlit Prototype
-# ============================================
-FROM unstructured-base AS app
+FROM downloads.unstructured.io/unstructured-io/unstructured:latest
 
 USER root
 
-# Streamlit und zusätzliche Dependencies installieren
-# Python 3.12 erfordert unstructured>=0.15.0
+# Nur Streamlit und Visualisierungs-Dependencies installieren
+# unstructured ist bereits im Base-Image vorhanden!
 RUN pip install --no-cache-dir \
     streamlit==1.28.0 \
     plotly==5.17.0 \
     pandas==2.1.1 \
-    unstructured[all-docs]>=0.15.0 \
     && rm -rf /root/.cache/pip
 
 # Arbeitsverzeichnis für Anwendung
