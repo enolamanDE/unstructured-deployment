@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: unstructured-prototype
     ports:
-      - "0.0.0.0:8501:8501"  # Wichtig: 0.0.0.0 für externen Zugriff!
+      - "0.0.0.0:443:8501"  # Port 443 (HTTPS) → Container Port 8501
     volumes:
       - ./test_files:/app/prototype/test_files
       - ./logs:/app/prototype/logs
