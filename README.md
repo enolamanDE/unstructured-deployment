@@ -28,17 +28,13 @@ sudo systemctl start docker
 
 ### Installation (als optimise)
 ```bash
-# 1. Repository klonen (privates Repo - braucht Personal Access Token!)
+# 1. Repository klonen
 cd ~
-git clone https://enolamanDE:[DEIN-TOKEN]@github.com/enolamanDE/unstructured-deployment.git
-
-# Token erstellen: https://github.com/settings/tokens/new
-# Berechtigung: "repo" (full control)
+git clone https://github.com/enolamanDE/unstructured-deployment.git
 
 # 2. Setup
 cd unstructured-deployment
 chmod +x *.sh
-git config credential.helper store  # Token speichern für Updates
 
 # 3. Erstes Deployment (als root!)
 exit  # Zurück zu root
@@ -203,35 +199,6 @@ docker compose down
 ./start.sh
 ```
 
-### Git Pull schlägt fehl (private Repo)
-```bash
-# Credentials neu eingeben
-cd ~/unstructured-deployment
-git config credential.helper store
-git pull origin main
-# Username: enolamanDE
-# Password: [DEIN-PERSONAL-ACCESS-TOKEN]
-```
-
----
-
-## 🔐 GitHub Personal Access Token
-
-**Erstellen:**
-1. https://github.com/settings/tokens/new
-2. Name: "VM Deployment"
-3. Expiration: No expiration (oder 1 Jahr)
-4. Berechtigung: ✅ **repo** (full control)
-5. "Generate token" → **SOFORT KOPIEREN!**
-
-**Verwenden:**
-```bash
-# Beim Klonen
-git clone https://enolamanDE:[TOKEN]@github.com/enolamanDE/unstructured-deployment.git
-
-# Für zukünftige Pulls speichern
-git config credential.helper store
-```
 
 ---
 
@@ -302,5 +269,6 @@ Basiert auf [unstructured.io](https://github.com/Unstructured-IO/unstructured) -
 ---
 
 **Erstellt:** 2025-10-29  
-**Für:** Optimise User Workflow mit privatem GitHub Repository
+**Für:** Optimise User Workflow  
+**Repository:** https://github.com/enolamanDE/unstructured-deployment
 
