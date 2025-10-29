@@ -136,12 +136,70 @@ if [ $COUNTER -ge $MAX_WAIT ]; then
 fi
 
 echo ""
+
+# ============================================
+# Prüfe Firewall für externen Zugriff
+# ============================================
+echo "🔥 Prüfe Firewall-Einstellungen..."
+if command -v ufw &> /dev/null; then
+    if sudo ufw status | grep -q "Status: active"; then
+        echo "⚠️  UFW Firewall ist aktiv!"
+        if sudo ufw status | grep -q "8501"; then
+            echo "✅ Port 8501 ist bereits geöffnet"
+        else
+            echo "⚠️  Port 8501 ist NICHT geöffnet!"
+            echo ""
+            read -p "Soll Port 8501 jetzt geöffnet werden? (y/n) " -n 1 -r
+            echo ""
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                sudo ufw allow 8501/tcp
+                echo "✅ Port 8501 geöffnet!"
+            else
+                echo "⚠️  WICHTIG: Öffne Port 8501 manuell für externen Zugriff:"
+                echo "   sudo ufw allow 8501/tcp"
+            fi
+        fi
+    else
+        echo "✅ UFW Firewall ist inaktiv - Port 8501 erreichbar"
+    fi
+elif command -v firewall-cmd &> /dev/null; then
+    if sudo firewall-cmd --state &> /dev/null; then
+        echo "⚠️  FirewallD ist aktiv!"
+        if sudo firewall-cmd --list-ports | grep -q "8501"; then
+            echo "✅ Port 8501 ist bereits geöffnet"
+        else
+            echo "⚠️  Port 8501 ist NICHT geöffnet!"
+            echo ""
+            read -p "Soll Port 8501 jetzt geöffnet werden? (y/n) " -n 1 -r
+            echo ""
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                sudo firewall-cmd --permanent --add-port=8501/tcp
+                sudo firewall-cmd --reload
+                echo "✅ Port 8501 geöffnet!"
+            else
+                echo "⚠️  WICHTIG: Öffne Port 8501 manuell für externen Zugriff:"
+                echo "   sudo firewall-cmd --permanent --add-port=8501/tcp"
+                echo "   sudo firewall-cmd --reload"
+            fi
+        fi
+    else
+        echo "✅ FirewallD ist inaktiv - Port 8501 erreichbar"
+    fi
+else
+    echo "✅ Keine Firewall erkannt - Port 8501 sollte erreichbar sein"
+fi
+
+echo ""
 echo "============================================"
 echo "🎉 DEPLOYMENT ERFOLGREICH!"
 echo "============================================"
 echo ""
 echo "📱 Anwendung erreichbar unter:"
-echo "   🌐 http://localhost:8501"
+echo "   🌐 Lokal:  http://localhost:8501"
+VM_IP=$(hostname -I | awk '{print $1}')
+if [ ! -z "$VM_IP" ]; then
+    echo "   🌍 Extern: http://$VM_IP:8501"
+fi
 echo ""
 echo "📊 Nützliche Befehle:"
 echo "   Logs anzeigen:    docker-compose logs -f"
