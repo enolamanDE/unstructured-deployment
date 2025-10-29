@@ -18,16 +18,18 @@ RUN mkdir -p test_files logs
 USER notebook-user
 
 # Installiere Streamlit und Dependencies als notebook-user
+# WICHTIG: Streamlit braucht numpy<2, daher explizit numpy<2 angeben
 RUN python3 -m pip install --user --no-cache-dir \
     streamlit==1.28.0 \
     plotly==5.17.0 \
-    pandas==2.1.1
+    pandas==2.1.1 \
+    'numpy<2'
 
 # Diagnose: Prüfe ob unstructured importierbar ist
 RUN echo "=== Checking unstructured import ===" && \
     python3 -c "import unstructured; print('✅ unstructured erfolgreich importiert')" || \
     echo "⚠️  unstructured NOT found - Installing from pip..." && \
-    python3 -m pip install --user --no-cache-dir unstructured[all-docs]
+    python3 -m pip install --user --no-cache-dir 'unstructured[all-docs]' 'numpy<2'
 
 # Port für Streamlit
 EXPOSE 8501
