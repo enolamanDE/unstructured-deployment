@@ -29,27 +29,37 @@ fi
 if ! docker ps &> /dev/null; then
     echo "❌ Docker Permission Problem erkannt!"
     echo ""
-    echo "Der aktuelle Benutzer hat keine Berechtigung für Docker."
-    echo ""
-    echo "🔧 LÖSUNG:"
-    echo "   sudo usermod -aG docker $USER"
-    echo ""
-    read -p "Soll ich das jetzt für dich machen? (y/n) " -n 1 -r
-    echo ""
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        sudo usermod -aG docker $USER
-        echo "✅ Benutzer zur Docker-Gruppe hinzugefügt"
+
+    # Prüfe ob User bereits in docker-Gruppe ist (aber nicht aktiv)
+    if groups | grep -q docker; then
+        echo "✅ Benutzer '$USER' ist bereits in docker-Gruppe"
+        echo "⚠️  ABER: Gruppe ist in dieser Session noch nicht aktiv (nach 'su')!"
         echo ""
-        echo "⚠️  WICHTIG: Du musst dich jetzt AUSLOGGEN und NEU EINLOGGEN!"
-        echo "   (oder VM neustarten)"
+        echo "🔧 LÖSUNG 1 (EMPFOHLEN): Als root ausführen"
         echo ""
-        echo "Danach führe './deploy.sh' erneut aus"
-        exit 0
+        echo "   exit  # Beende 'su optimise'"
+        echo "   cd /home/optimise/unstructured-deployment"
+        echo "   ./deploy.sh"
+        echo ""
+        echo "   Root kann Docker immer nutzen - keine Gruppen-Probleme!"
+        echo ""
+        echo "🔧 LÖSUNG 2: Wrapper-Script verwenden"
+        echo ""
+        echo "   sudo -u optimise bash -c 'cd ~/unstructured-deployment && ./deploy.sh'"
+        echo ""
+        echo "💡 WARUM? Nach 'su' werden Docker-Gruppen nicht geladen."
+        echo "   Root oder sudo -u optimise umgehen dieses Problem!"
+        echo ""
+        exit 1
     else
+        echo "❌ Benutzer '$USER' ist NICHT in der docker-Gruppe!"
         echo ""
-        echo "Abgebrochen. Führe manuell aus:"
+        echo "🔧 LÖSUNG (als Admin/Root ausführen):"
+        echo ""
         echo "   sudo usermod -aG docker $USER"
-        echo "   Dann ausloggen und neu einloggen"
+        echo ""
+        echo "Dann muss sich '$USER' NEU EINLOGGEN (oder VM neustarten)."
+        echo ""
         exit 1
     fi
 fi
