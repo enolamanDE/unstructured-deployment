@@ -24,9 +24,9 @@ WORKDIR /app/prototype
 COPY app_open_source_recovered.py .
 COPY pptx_helpers.py .
 
-# Erstelle optimise User und Gruppe (OHNE || true für besseres Error-Handling)
-RUN groupadd -g 1000 optimise && \
-    useradd -m -u 1000 -g optimise optimise && \
+# Erstelle optimise User und Gruppe (Alpine Linux kompatibel)
+RUN addgroup -g 1000 optimise && \
+    adduser -D -u 1000 -G optimise optimise && \
     mkdir -p test_files && \
     chown -R optimise:optimise /app/prototype
 
