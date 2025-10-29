@@ -16,29 +16,25 @@ Docker-basiertes Deployment für unstructured.io Document Processing mit Streaml
 
 ## ⚡ Quick Start (als optimise User)
 
-### Voraussetzungen (einmalig als root)
-```bash
-# Docker installieren und optimise-User berechtigen
-sudo apt update
-sudo apt install docker.io docker-compose-plugin -y
-sudo usermod -aG docker optimise
-sudo systemctl enable docker
-sudo systemctl start docker
-```
+### Voraussetzungen
+✅ Docker ist bereits über Bootstrap-Script installiert  
+✅ optimise User ist bereits in docker-Gruppe  
+✅ **Wichtig:** optimise muss sich NEU per SSH einloggen (nicht `su`!), damit Docker-Gruppe aktiv wird
 
 ### Installation (als optimise)
 ```bash
-# 1. Repository klonen
+# 1. NEU per SSH einloggen (wichtig für Docker-Gruppe!)
+ssh optimise@vm-ip
+
+# 2. Repository klonen
 cd ~
 git clone https://github.com/enolamanDE/unstructured-deployment.git
 
-# 2. Setup
+# 3. Setup
 cd unstructured-deployment
 chmod +x *.sh
 
-# 3. Erstes Deployment (als root!)
-exit  # Zurück zu root
-cd /home/optimise/unstructured-deployment
+# 4. Deployment starten (als optimise!)
 ./deploy.sh
 ```
 

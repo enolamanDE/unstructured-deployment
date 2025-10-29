@@ -1,16 +1,4 @@
-# ============================================
-# Streamlit Prototype Dependencies
-# ============================================
-# Hinweis: unstructured.io und alle Core-Dependencies
-# sind bereits im Base-Image enthalten!
-# Hier nur zusätzliche Packages für die Streamlit-App.
-
-# Web Framework
-streamlit==1.28.0
-
-# Visualisierung
-plotly==5.17.0
-
-# Datenverarbeitung
-pandas==2.1.1
+streamlit>=1.28.0
+plotly>=5.17.0
+pandas>=2.1.0
 
