@@ -19,6 +19,11 @@ USER notebook-user
 
 # Installiere Streamlit und Dependencies als notebook-user
 # WICHTIG: Streamlit braucht numpy<2, daher explizit numpy<2 angeben
+# Torch-Warnungen unterdrücken (sind nicht kritisch)
+ENV PYTHONWARNINGS="ignore::DeprecationWarning,ignore::UserWarning"
+ENV TRANSFORMERS_VERBOSITY=error
+ENV TOKENIZERS_PARALLELISM=false
+
 RUN python3 -m pip install --user --no-cache-dir \
     streamlit==1.28.0 \
     plotly==5.17.0 \
