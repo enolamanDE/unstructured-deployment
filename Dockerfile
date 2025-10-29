@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir \
     streamlit==1.28.0 \
     plotly==5.17.0 \
     pandas==2.1.1 \
+    unstructured[all-docs]==0.11.0 \
     && rm -rf /root/.cache/pip
 
 # Arbeitsverzeichnis für Anwendung
