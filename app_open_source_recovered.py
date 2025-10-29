@@ -71,16 +71,8 @@ def setup_standard_picture_partitioner():
         print(f"Registrierung fehlgeschlagen: {e}")
         return False
 
-# Repository-Pfad für Open Source Library
-current_dir = Path.cwd()
-repo_path = current_dir.parent / "official-repo"
-# Falls das nicht funktioniert, nutze absoluten Pfad
-if not repo_path.exists():
-    repo_path = Path("/home/amu/project/unstructured.io/official-repo")
-
-sys.path.insert(0, str(repo_path))
-
 # Direkte Import der Open Source Unstructured Library
+# Im Docker Container ist unstructured bereits installiert
 try:
     from unstructured.partition.auto import partition
     from unstructured.partition.pdf import partition_pdf

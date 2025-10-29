@@ -4,10 +4,10 @@
 # ============================================
 FROM downloads.unstructured.io/unstructured-io/unstructured:latest
 
+# Wechsle zu root für Installation
 USER root
 
 # Nur Streamlit und Visualisierungs-Dependencies installieren
-# unstructured ist bereits im Base-Image vorhanden!
 RUN pip install --no-cache-dir \
     streamlit==1.28.0 \
     plotly==5.17.0 \
@@ -21,8 +21,12 @@ WORKDIR /app/prototype
 COPY app_open_source_recovered.py .
 COPY pptx_helpers.py .
 
-# Test-Dateien Verzeichnis erstellen
-RUN mkdir -p test_files logs
+# Test-Dateien Verzeichnis erstellen und Berechtigungen setzen
+RUN mkdir -p test_files logs && \
+    chown -R notebook-user:notebook-user /app/prototype
+
+# Zurück zum notebook-user (Standard-User im Base-Image)
+USER notebook-user
 
 # Port für Streamlit
 EXPOSE 8501
