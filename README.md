@@ -1,482 +1,306 @@
-# 🚀 Unstructured.io Streamlit Prototype - Docker Deployment
+# 🚀 Unstructured.io Deployment
 
-Ein produktionsreifer Streamlit-Prototyp basierend auf dem **offiziellen unstructured.io Docker Image** mit vollständiger Feature-Unterstützung.
+Docker-basiertes Deployment für unstructured.io Document Processing mit Streamlit UI.
 
-## 📋 Inhaltsverzeichnis
+## 📋 Features
 
-- [Features](#-features)
-- [Voraussetzungen](#-voraussetzungen)
-- [Schnellstart](#-schnellstart)
-- [Was ist dabei?](#-was-ist-dabei)
-- [Unstructured.io Features](#-unstructuredio-features)
-- [Nutzung](#-nutzung)
-- [Troubleshooting](#-troubleshooting)
-- [Dokumentation](#-dokumentation)
-
----
-
-## ✨ Features
-
-### Streamlit Prototype
-- 📄 **Multi-Format Support**: PDF, DOCX, PPTX, Excel, HTML, Markdown, E-Mails, Bilder
-- 🎨 **Interaktive UI**: Datei-Upload, Live-Preview, Format-Konvertierung
-- 📊 **Export-Formate**: Text, Markdown, HTML, JSON, CSV, Bedrock RAG JSON
-- 🖼️ **Bild-Extraktion**: Automatische Extraktion und Download von Bildern aus Dokumenten
-- 🤖 **AWS Bedrock Ready**: Optimierte JSON-Struktur für RAG mit Bildunterstützung
-
-### Unstructured.io Open Source Features (automatisch inkludiert)
-- ✅ **YOLOvX Object Detection**: Automatische Erkennung von Titeln, Tabellen, Bildern, Listen
-- ✅ **Tesseract + PaddleOCR**: Mehrsprachige OCR für gescannte Dokumente
-- ✅ **Table Transformer**: Intelligente Tabellen-Extraktion als HTML
-- ✅ **Hi-Res Strategy**: Beste Qualität für komplexe Layouts
-- ✅ **NLP Pipeline**: Automatische Spracherkennung und Text-Segmentierung
-- ✅ **Element Metadata**: Bounding Boxes, Page Numbers, Koordinaten
+- ✅ **Open Source Stack**: Vollständig kostenlos ohne API-Keys
+- ✅ **Multi-Format Support**: PDF, DOCX, PPTX, Excel, HTML, Markdown, Bilder
+- ✅ **AI Features**: YOLOvX Object Detection, Tesseract OCR, PaddleOCR, Table Transformer
+- ✅ **Streamlit UI**: Interaktive Web-Oberfläche für Dokument-Upload und -Verarbeitung
+- ✅ **Export-Formate**: Text, JSON, HTML, Markdown, Bedrock RAG JSON
+- ✅ **Bild-Extraktion**: Automatische Extraktion und Download von Bildern
+- ✅ **Docker Ready**: Einfaches Deployment mit einem Befehl
 
 ---
 
-## 🔧 Voraussetzungen
+## ⚡ Quick Start (als optimise User)
 
-- **Docker** (>= 20.10)
-- **Docker Compose** (>= 1.29) oder Docker Compose Plugin
-- **Mindestens 8 GB RAM** (empfohlen 16 GB)
-- **Mindestens 10 GB freier Speicher** (für Docker Image)
-
-### Installation prüfen:
-
+### Voraussetzungen (einmalig als root)
 ```bash
-docker --version
-docker-compose --version  # oder: docker compose version
+# Docker installieren und optimise-User berechtigen
+sudo apt update
+sudo apt install docker.io docker-compose-plugin -y
+sudo usermod -aG docker optimise
+sudo systemctl enable docker
+sudo systemctl start docker
 ```
 
----
-
-## ⚡ Schnellstart
-
-### 1. Deployment starten (automatisch)
-
+### Installation (als optimise)
 ```bash
-cd /home/amu/project/unstructured.io/deployment
-chmod +x deploy.sh
+# 1. Repository klonen (privates Repo - braucht Personal Access Token!)
+cd ~
+git clone https://enolamanDE:[DEIN-TOKEN]@github.com/enolamanDE/unstructured-deployment.git
+
+# Token erstellen: https://github.com/settings/tokens/new
+# Berechtigung: "repo" (full control)
+
+# 2. Setup
+cd unstructured-deployment
+chmod +x *.sh
+git config credential.helper store  # Token speichern für Updates
+
+# 3. Erstes Deployment (als root!)
+exit  # Zurück zu root
+cd /home/optimise/unstructured-deployment
 ./deploy.sh
 ```
 
-**Das Script macht:**
-1. ✅ Prüft Docker-Installation
-2. ✅ Erstellt notwendige Verzeichnisse
-3. ✅ Lädt offizielles unstructured.io Base-Image (~2-3 GB)
-4. ✅ Baut Anwendungs-Image mit Streamlit
-5. ✅ Startet Container
-6. ✅ Wartet auf Streamlit-Bereitschaft
-
-**Erster Start:** 5-10 Minuten (Image-Download)  
-**Nachfolgende Starts:** 30-60 Sekunden
-
-### 2. Anwendung öffnen
-
+### Zugriff
 ```
-http://localhost:8501
+Lokal:  http://localhost:8501
+Extern: http://[VM-IP]:8501
 ```
 
-### 3. Manuelles Deployment (alternativ)
+---
 
+## 📝 Tägliche Befehle (als optimise)
+
+### Anwendung starten
 ```bash
-# Container stoppen (falls läuft)
-docker-compose down
-
-# Image bauen
-docker-compose build
-
-# Container starten
-docker-compose up -d
-
-# Logs anzeigen
-docker-compose logs -f
+cd ~/unstructured-deployment
+./start.sh
 ```
 
----
-
-## 📦 Was ist dabei?
-
-### Dateien im Deployment-Ordner
-
-```
-deployment/
-├── Dockerfile                      # Multi-Stage Build mit offiziellem Base-Image
-├── docker-compose.yml              # Orchestrierung + Environment
-├── deploy.sh                       # Automatisches Deployment-Script
-├── requirements.txt                # Nur Streamlit + Zusatz-Pakete
-├── app_open_source_recovered.py    # Hauptanwendung
-├── pptx_helpers.py                 # PowerPoint-Hilfsfunktionen
-├── README.md                       # Diese Datei
-├── DEPLOYMENT-GUIDE.md            # Detaillierte Deployment-Anleitung
-├── VM-TRANSFER-GUIDE.md           # Anleitung: Code auf VM übertragen
-├── test_files/                     # Upload-Verzeichnis (Volume)
-└── logs/                           # Log-Verzeichnis (Volume)
-```
-
-### Docker Image Details
-
-**Base Image:**
-```
-downloads.unstructured.io/unstructured-io/unstructured:latest
-```
-
-**Enthält automatisch:**
-- ✅ Python 3.12
-- ✅ Tesseract OCR (Deutsch + Englisch)
-- ✅ PaddleOCR
-- ✅ YOLOvX Object Detection Model (vortrainiert)
-- ✅ Table Transformer Model (vortrainiert)
-- ✅ NLTK Data (punkt_tab, averaged_perceptron_tagger_eng)
-- ✅ Poppler-utils (PDF-Rendering)
-- ✅ libmagic (Dateityp-Erkennung)
-- ✅ Alle unstructured.io Core-Dependencies
-
-**Zusätzlich installiert (in unserem Layer):**
-- Streamlit 1.28.0
-- Plotly 5.17.0
-- Pandas 2.1.1
-
----
-
-## 🧠 Unstructured.io Features
-
-### YOLOvX Object Detection
-
-**Was ist YOLOvX?**
-- Hochmodernes Deep Learning Modell für **Dokumenten-Layout-Analyse**
-- Speziell trainiert auf wissenschaftliche Papers, Berichte, Verträge, Formulare
-- Erkennt automatisch: Titel, Absätze, Tabellen, Bilder, Fußnoten, Header, Footer
-
-**Was macht es in unserem Prototyp?**
-```python
-# Automatisch aktiviert bei strategy="hi_res"
-elements = partition_pdf(
-    filename="document.pdf",
-    strategy="hi_res"  # ← YOLOvX wird verwendet
-)
-
-# Resultat: Strukturierte Elemente mit Bounding Boxes
-[
-    Title("Quarterly Report"),
-    NarrativeText("This document presents..."),
-    Table("<table><tr>...</tr></table>"),
-    Image(metadata={"coordinates": ...})
-]
-```
-
-**Vorteile:**
-- ✅ Keine manuelle Konfiguration nötig
-- ✅ Funktioniert out-of-the-box für 40+ Dateiformate
-- ✅ Bessere Ergebnisse als reine Text-Extraktion
-- ✅ Behält semantische Dokumentstruktur
-
-### Processing Strategies
-
-| Strategy | Wann nutzen | YOLOvX | OCR | Geschwindigkeit |
-|----------|-------------|---------|-----|-----------------|
-| **fast** | Einfache Text-PDFs | ❌ | ❌ | ⚡⚡⚡ |
-| **hi_res** | Komplexe Layouts, Tabellen | ✅ | ✅ | ⚡⚡ |
-| **ocr_only** | Gescannte Dokumente | ❌ | ✅ | ⚡ |
-| **auto** | Automatische Erkennung | 🔀 | 🔀 | ⚡⚡ |
-
-**Im Prototyp eingestellt:**
-```python
-# app_open_source_recovered.py nutzt standardmäßig:
-strategy = "hi_res"  # Beste Qualität
-```
-
-### Tesseract + PaddleOCR
-
-**Beide OCR-Engines sind vorinstalliert!**
-
-```python
-# Tesseract (Standard für europäische Sprachen)
-partition_pdf("scan.pdf", ocr_languages="deu+eng")
-
-# PaddleOCR (besser für asiatische Sprachen)
-partition_pdf("scan.pdf", ocr_languages="chi_sim")
-```
-
-**Unterstützte Sprachen:**
-- ✅ Deutsch (deu)
-- ✅ Englisch (eng)
-- ✅ Weitere installierbar: `apt-get install tesseract-ocr-fra` (Französisch)
-
-### NLP Features
-
-**Automatisch aktiviert:**
-- ✅ Spracherkennung pro Element
-- ✅ Text-Segmentierung (Sätze, Absätze)
-- ✅ Metadaten-Extraktion (Datum, E-Mail-Adressen)
-
-```python
-element.metadata.languages  # ['deu', 'eng']
-element.metadata.emphasized_text_tags  # ['b', 'i']
-```
-
----
-
-## 🎯 Nutzung
-
-### Container-Management
-
+### Anwendung stoppen
 ```bash
-# Container starten
-docker-compose up -d
+cd ~/unstructured-deployment
+./stop.sh
+```
 
-# Logs live anzeigen
-docker-compose logs -f
+### Updates von GitHub + Rebuild
+```bash
+cd ~/unstructured-deployment
+./update.sh
+```
+
+### Logs anschauen
+```bash
+docker compose logs -f
+```
+
+### Status prüfen
+```bash
+docker compose ps
+```
+
+---
+
+## 🔄 Workflow
+
+### Als Entwickler (lokal)
+```bash
+# Code ändern und pushen
+cd /home/amu/project/unstructured.io/deployment
+git add .
+git commit -m "Update XYZ"
+git push origin main
+```
+
+### Auf VM (als optimise)
+```bash
+# Updates holen
+cd ~/unstructured-deployment
+git pull origin main
+
+# Anwendung aktualisieren
+./update.sh  # Holt Updates + baut neu + startet
+```
+
+---
+
+## 🔧 Erweiterte Befehle
+
+### Manueller Rebuild
+```bash
+cd ~/unstructured-deployment
+docker compose build --no-cache
+./start.sh
+```
+
+### Container komplett neu erstellen
+```bash
+docker compose down -v
+./deploy.sh
+```
+
+### Alte Images aufräumen
+```bash
+docker image prune -a
+```
+
+---
+
+## 🔥 Firewall
+
+Das `deploy.sh` Script prüft automatisch die Firewall und bietet an, Port 8501 zu öffnen.
+
+**Manuell:**
+```bash
+# UFW (Ubuntu/Debian)
+sudo ufw allow 8501/tcp
+sudo ufw reload
+
+# FirewallD (CentOS/RHEL)
+sudo firewall-cmd --permanent --add-port=8501/tcp
+sudo firewall-cmd --reload
+```
+
+---
+
+## 📂 Verzeichnis-Struktur
+
+```
+~/unstructured-deployment/
+├── deploy.sh                     # Erstes Deployment (alle Features)
+├── start.sh                      # Schnellstart (täglich)
+├── stop.sh                       # Stoppen
+├── update.sh                     # Updates + Rebuild
+├── docker-compose.yml            # Docker-Konfiguration
+├── Dockerfile                    # Image-Definition
+├── app_open_source_recovered.py # Streamlit-App
+├── pptx_helpers.py              # Helper-Funktionen
+├── requirements.txt             # Python-Dependencies
+├── test_files/                  # Upload-Verzeichnis (automatisch erstellt)
+└── logs/                        # Logs (automatisch erstellt)
+```
+
+---
+
+## 🆘 Troubleshooting
+
+### Docker Permission Denied
+```bash
+# Prüfe ob optimise in docker-Gruppe
+groups
+
+# Falls nicht: als root ausführen
+sudo usermod -aG docker optimise
+
+# Dann NEU einloggen (wichtig!)
+exit
+ssh optimise@vm-ip
+```
+
+### Container startet nicht
+```bash
+# Logs anschauen
+docker compose logs
+
+# Neu starten
+./stop.sh && ./start.sh
+```
+
+### Port 8501 bereits belegt
+```bash
+# Prüfe was Port nutzt
+sudo lsof -i :8501
 
 # Container stoppen
-docker-compose down
+docker compose down
 
-# Container neu starten
-docker-compose restart
-
-# Container-Status
-docker-compose ps
-
-# In Container einloggen (für Debugging)
-docker exec -it unstructured-prototype bash
+# Neu starten
+./start.sh
 ```
 
-### Volumes
-
-**Persistente Daten:**
+### Git Pull schlägt fehl (private Repo)
 ```bash
-./test_files/   # Hochgeladene Dateien
-./logs/         # Anwendungs-Logs
+# Credentials neu eingeben
+cd ~/unstructured-deployment
+git config credential.helper store
+git pull origin main
+# Username: enolamanDE
+# Password: [DEIN-PERSONAL-ACCESS-TOKEN]
 ```
 
-**Zugriff vom Host:**
+---
+
+## 🔐 GitHub Personal Access Token
+
+**Erstellen:**
+1. https://github.com/settings/tokens/new
+2. Name: "VM Deployment"
+3. Expiration: No expiration (oder 1 Jahr)
+4. Berechtigung: ✅ **repo** (full control)
+5. "Generate token" → **SOFORT KOPIEREN!**
+
+**Verwenden:**
 ```bash
-ls -lah deployment/test_files/
-cat deployment/logs/streamlit.log
-```
+# Beim Klonen
+git clone https://enolamanDE:[TOKEN]@github.com/enolamanDE/unstructured-deployment.git
 
-### Port-Änderung
-
-In `docker-compose.yml`:
-```yaml
-ports:
-  - "8080:8501"  # Ändere 8080 zu gewünschtem Port
+# Für zukünftige Pulls speichern
+git config credential.helper store
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## 🎯 Best Practices
 
-### Problem: Container startet nicht
-
+### Regelmäßige Updates
 ```bash
-# Logs prüfen
-docker-compose logs
-
-# Spezifischer Container
-docker logs unstructured-prototype
+# Einmal täglich/wöchentlich
+cd ~/unstructured-deployment
+./update.sh
 ```
 
-**Häufige Ursachen:**
-- Port 8501 bereits belegt → Ändere Port in `docker-compose.yml`
-- Zu wenig RAM → Erhöhe Docker-Memory-Limit
-- Alter Container läuft noch → `docker-compose down && docker-compose up -d`
-
-### Problem: "Out of memory"
-
-```yaml
-# In docker-compose.yml unter service:
-deploy:
-  resources:
-    limits:
-      memory: 8G
-    reservations:
-      memory: 4G
-```
-
-### Problem: Streamlit lädt nicht
-
+### Logs prüfen
 ```bash
-# Health Check
-curl http://localhost:8501/_stcore/health
+# Letzte 50 Zeilen
+docker compose logs --tail=50
 
-# Firewall prüfen
-sudo ufw allow 8501/tcp
-
-# Browser-Cache leeren
-Ctrl+Shift+R (Hard Reload)
+# Live-Logs
+docker compose logs -f
 ```
 
-### Problem: Dateien verschwinden nach Neustart
-
-**Lösung:** Volumes korrekt gemountet?
+### Container-Status
 ```bash
-# Prüfen
-docker inspect unstructured-prototype | grep Mounts -A 10
+# Alle Container anzeigen
+docker compose ps
 
-# Sollte zeigen:
-# "Source": "/home/user/deployment/test_files"
-# "Destination": "/app/prototype/test_files"
-```
-
-### Problem: "Permission denied" beim deploy.sh
-
-```bash
-chmod +x deploy.sh
-./deploy.sh
+# Ressourcen-Nutzung
+docker stats
 ```
 
 ---
 
-## 📚 Dokumentation
+## 📊 System-Anforderungen
 
-### Offizielle Unstructured.io Dokumentation
-
-1. **Supported File Types**: https://docs.unstructured.io/open-source/ingestion/supported-file-types
-2. **Chunking**: https://docs.unstructured.io/open-source/core-functionality/chunking
-3. **Document Elements**: https://docs.unstructured.io/open-source/concepts/document-elements
-4. **PDF Transformation**: https://unstructured.io/blog/mastering-pdf-transformation-strategies-with-unstructured-part-2
-5. **Docker Installation**: https://docs.unstructured.io/open-source/installation/docker-installation
-
-### GitHub Repository
-
-- **Official Repo**: https://github.com/Unstructured-IO/unstructured
-- **Docker Images**: https://downloads.unstructured.io/unstructured-io/unstructured
-
-### Weitere Guides in diesem Ordner
-
-- `DEPLOYMENT-GUIDE.md` - Detaillierte Deployment-Schritte
-- `VM-TRANSFER-GUIDE.md` - Code auf VM übertragen (SCP, rsync, Git)
+- **RAM**: Mindestens 8 GB (empfohlen 16 GB)
+- **Speicher**: Mindestens 10 GB frei
+- **Docker**: Version 20.10+
+- **Docker Compose**: Version 1.29+ oder Docker Compose Plugin
+- **OS**: Ubuntu 20.04+, Debian 10+, CentOS 8+, oder vergleichbar
 
 ---
 
-## 🔐 Sicherheit
+## 🚀 Architektur
 
-### Produktions-Deployment
-
-**Wichtig für Production:**
-
-1. **Secrets Management**
-   - Keine Passwörter in `docker-compose.yml`
-   - Nutze Docker Secrets oder .env-Dateien
-
-2. **Reverse Proxy**
-   ```yaml
-   # Beispiel: nginx proxy
-   nginx:
-     image: nginx:alpine
-     ports:
-       - "80:80"
-       - "443:443"
-     volumes:
-       - ./nginx.conf:/etc/nginx/nginx.conf
-   ```
-
-3. **SSL/TLS**
-   - Let's Encrypt für kostenlose Zertifikate
-   - `certbot` für automatische Erneuerung
-
-4. **Firewall**
-   ```bash
-   sudo ufw allow 80/tcp
-   sudo ufw allow 443/tcp
-   sudo ufw deny 8501/tcp  # Nur intern erreichbar
-   ```
+- **Base Image**: `downloads.unstructured.io/unstructured-io/unstructured:latest`
+- **Frontend**: Streamlit 1.28.0
+- **Processing**: Unstructured.io Open Source Library
+- **Features**: YOLOvX, Tesseract, PaddleOCR, Table Transformer (alle inklusive)
+- **User**: Container läuft als `optimise` (UID 1000)
+- **Port**: 8501 (extern erreichbar via 0.0.0.0)
 
 ---
 
-## 📊 Performance-Tuning
+## 📞 Support
 
-### Docker Resource Limits
-
-```yaml
-# docker-compose.yml
-services:
-  unstructured-app:
-    deploy:
-      resources:
-        limits:
-          cpus: '4.0'
-          memory: 8G
-        reservations:
-          cpus: '2.0'
-          memory: 4G
-```
-
-### Streamlit Caching
-
-```python
-# Im Code bereits aktiviert:
-@st.cache_data
-def process_document(file):
-    # Caching reduziert Rechenzeit bei wiederholten Uploads
-    pass
-```
+**Bei Problemen:**
+1. Logs prüfen: `docker compose logs`
+2. Status prüfen: `docker compose ps`
+3. Container neu starten: `./stop.sh && ./start.sh`
+4. Komplett neu bauen: `./update.sh`
 
 ---
 
-## 🚀 VM-Deployment
+## 📄 Lizenz
 
-### Code auf VM übertragen
-
-**Siehe detaillierte Anleitung:** `VM-TRANSFER-GUIDE.md`
-
-**Schnellste Methode:**
-```bash
-# Von deinem WSL aus
-cd /home/amu/project/unstructured.io
-scp -r deployment/ user@vm-ip:/opt/unstructured-deployment/
-
-# Auf VM: Deployment starten
-ssh user@vm-ip "cd /opt/unstructured-deployment && ./deploy.sh"
-```
-
-**Fertig!** Die Anwendung läuft auf: `http://vm-ip:8501`
+Basiert auf [unstructured.io](https://github.com/Unstructured-IO/unstructured) - Apache 2.0 License
 
 ---
 
-## 🎉 Fertig!
-
-Dein Unstructured.io Prototyp läuft jetzt professionell in Docker mit:
-- ✅ Offiziellem Base-Image
-- ✅ YOLOvX Object Detection
-- ✅ Tesseract + PaddleOCR
-- ✅ Alle 40+ Dateiformate
-- ✅ Production-ready Setup
-
-**Viel Erfolg beim Testen! 🚀**
-
----
-
-## 📞 Support & Weitere Hilfe
-
-Bei Fragen oder Problemen:
-
-1. **Logs prüfen**: `docker-compose logs -f`
-2. **Container-Status**: `docker-compose ps`
-3. **Health Check**: `curl http://localhost:8501/_stcore/health`
-4. **Offizielle Docs**: https://docs.unstructured.io
-
-### Häufige Fragen
-
-**Q: Brauche ich einen API-Key?**  
-A: Nein! Die Open Source Version funktioniert komplett lokal ohne API-Keys.
-
-**Q: Kostet das etwas?**  
-A: Nein! Alles ist Open Source und kostenlos nutzbar.
-
-**Q: Kann ich das in Production nutzen?**  
-A: Ja! Mit den Sicherheits-Hinweisen oben ist es production-ready.
-
-**Q: Wie groß ist das Docker Image?**  
-A: Base-Image: ~2-3 GB, Finales Image: ~3-4 GB
-
-**Q: Wie schnell ist die Verarbeitung?**  
-A: PDF (10 Seiten, hi_res): ~10-30 Sekunden, je nach Komplexität
-
----
-
-**Version:** 1.0.0  
-**Letzte Aktualisierung:** 2025-10-29  
-**Maintainer:** Unstructured.io Community
+**Erstellt:** 2025-10-29  
+**Für:** Optimise User Workflow mit privatem GitHub Repository
 
