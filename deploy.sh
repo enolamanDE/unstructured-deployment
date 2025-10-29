@@ -25,44 +25,6 @@ if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/
     exit 1
 fi
 
-# ⚠️ NEU: Prüfe Docker-Berechtigungen
-if ! docker ps &> /dev/null; then
-    echo "❌ Docker Permission Problem erkannt!"
-    echo ""
-
-    # Prüfe ob User bereits in docker-Gruppe ist (aber nicht aktiv)
-    if groups | grep -q docker; then
-        echo "✅ Benutzer '$USER' ist bereits in docker-Gruppe"
-        echo "⚠️  ABER: Gruppe ist in dieser Session noch nicht aktiv (nach 'su')!"
-        echo ""
-        echo "🔧 LÖSUNG 1 (EMPFOHLEN): Als root ausführen"
-        echo ""
-        echo "   exit  # Beende 'su optimise'"
-        echo "   cd /home/optimise/unstructured-deployment"
-        echo "   ./deploy.sh"
-        echo ""
-        echo "   Root kann Docker immer nutzen - keine Gruppen-Probleme!"
-        echo ""
-        echo "🔧 LÖSUNG 2: Wrapper-Script verwenden"
-        echo ""
-        echo "   sudo -u optimise bash -c 'cd ~/unstructured-deployment && ./deploy.sh'"
-        echo ""
-        echo "💡 WARUM? Nach 'su' werden Docker-Gruppen nicht geladen."
-        echo "   Root oder sudo -u optimise umgehen dieses Problem!"
-        echo ""
-        exit 1
-    else
-        echo "❌ Benutzer '$USER' ist NICHT in der docker-Gruppe!"
-        echo ""
-        echo "🔧 LÖSUNG (als Admin/Root ausführen):"
-        echo ""
-        echo "   sudo usermod -aG docker $USER"
-        echo ""
-        echo "Dann muss sich '$USER' NEU EINLOGGEN (oder VM neustarten)."
-        echo ""
-        exit 1
-    fi
-fi
 
 echo "✅ Docker und Docker Compose gefunden"
 echo ""
