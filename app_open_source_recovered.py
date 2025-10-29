@@ -2380,7 +2380,6 @@ def main():
         st.info(f"📝 NLP: {NLP_AVAILABLE}")
 
     with debug_col3:
-        st.write(f"📁 Repository: {repo_path.exists()}")
         st.write(f"🔗 Advanced: {ADVANCED_FEATURES_AVAILABLE}")
 
     # Stop wenn Library nicht verfügbar
