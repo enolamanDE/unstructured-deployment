@@ -23,6 +23,12 @@ RUN python3 -m pip install --user --no-cache-dir \
     plotly==5.17.0 \
     pandas==2.1.1
 
+# Diagnose: Prüfe ob unstructured importierbar ist
+RUN echo "=== Checking unstructured import ===" && \
+    python3 -c "import unstructured; print('✅ unstructured erfolgreich importiert')" || \
+    echo "⚠️  unstructured NOT found - Installing from pip..." && \
+    python3 -m pip install --user --no-cache-dir unstructured[all-docs]
+
 # Port für Streamlit
 EXPOSE 8501
 
