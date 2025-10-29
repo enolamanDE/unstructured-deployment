@@ -11,9 +11,8 @@ WORKDIR /app/prototype
 COPY app_open_source_recovered.py .
 COPY pptx_helpers.py .
 
-# Test-Dateien Verzeichnis erstellen und Berechtigungen setzen
-RUN mkdir -p test_files logs && \
-    chown -R notebook-user:notebook-user /app/prototype
+# Test-Dateien Verzeichnis erstellen
+RUN mkdir -p test_files logs
 
 # Wechsle zu notebook-user
 USER notebook-user
