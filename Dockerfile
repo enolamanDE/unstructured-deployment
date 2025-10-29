@@ -24,12 +24,16 @@ WORKDIR /app/prototype
 COPY app_open_source_recovered.py .
 COPY pptx_helpers.py .
 
-# Test-Dateien Verzeichnis erstellen
-RUN mkdir -p test_files && \
-    chown -R notebook-user:notebook-user /app/prototype
+# Erstelle optimise User (mit UID 1000 für Kompatibilität)
+RUN groupadd -g 1000 optimise 2>/dev/null || true && \
+    useradd -m -u 1000 -g optimise optimise 2>/dev/null || true
 
-# Zurück zu non-root user
-USER notebook-user
+# Test-Dateien Verzeichnis erstellen und Berechtigungen für optimise setzen
+RUN mkdir -p test_files && \
+    chown -R optimise:optimise /app/prototype
+
+# Als optimise User ausführen
+USER optimise
 
 # Port für Streamlit
 EXPOSE 8501
