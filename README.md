@@ -40,9 +40,12 @@ chmod +x *.sh
 
 ### Zugriff
 ```
-Lokal:  http://localhost:8501
-Extern: http://[VM-IP]:8501
+http://[VM-IP]
 ```
+
+Zum Beispiel: `http://188.245.186.212`
+
+**Port 80 ist Standard-HTTP** - keine Port-Angabe im Browser nötig!
 
 ---
 
