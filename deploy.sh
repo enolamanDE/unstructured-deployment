@@ -24,6 +24,36 @@ if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/
     echo "   Installiere Docker Compose: https://docs.docker.com/compose/install/"
     exit 1
 fi
+
+# ⚠️ NEU: Prüfe Docker-Berechtigungen
+if ! docker ps &> /dev/null; then
+    echo "❌ Docker Permission Problem erkannt!"
+    echo ""
+    echo "Der aktuelle Benutzer hat keine Berechtigung für Docker."
+    echo ""
+    echo "🔧 LÖSUNG:"
+    echo "   sudo usermod -aG docker $USER"
+    echo ""
+    read -p "Soll ich das jetzt für dich machen? (y/n) " -n 1 -r
+    echo ""
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        sudo usermod -aG docker $USER
+        echo "✅ Benutzer zur Docker-Gruppe hinzugefügt"
+        echo ""
+        echo "⚠️  WICHTIG: Du musst dich jetzt AUSLOGGEN und NEU EINLOGGEN!"
+        echo "   (oder VM neustarten)"
+        echo ""
+        echo "Danach führe './deploy.sh' erneut aus"
+        exit 0
+    else
+        echo ""
+        echo "Abgebrochen. Führe manuell aus:"
+        echo "   sudo usermod -aG docker $USER"
+        echo "   Dann ausloggen und neu einloggen"
+        exit 1
+    fi
+fi
+
 echo "✅ Docker und Docker Compose gefunden"
 echo ""
 
