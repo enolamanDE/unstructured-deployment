@@ -11,11 +11,11 @@ FROM unstructured-base AS app
 USER root
 
 # Streamlit und zusätzliche Dependencies installieren
+# Wichtig: unstructured>=0.15.0 für Python 3.12 Support
 RUN pip install --no-cache-dir \
     streamlit==1.28.0 \
     plotly==5.17.0 \
     pandas==2.1.1 \
-    unstructured[all-docs]==0.11.0 \
     && rm -rf /root/.cache/pip
 
 # Arbeitsverzeichnis für Anwendung
