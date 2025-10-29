@@ -24,12 +24,10 @@ WORKDIR /app/prototype
 COPY app_open_source_recovered.py .
 COPY pptx_helpers.py .
 
-# Erstelle optimise User (mit UID 1000 für Kompatibilität)
-RUN groupadd -g 1000 optimise 2>/dev/null || true && \
-    useradd -m -u 1000 -g optimise optimise 2>/dev/null || true
-
-# Test-Dateien Verzeichnis erstellen und Berechtigungen für optimise setzen
-RUN mkdir -p test_files && \
+# Erstelle optimise User und Gruppe (OHNE || true für besseres Error-Handling)
+RUN groupadd -g 1000 optimise && \
+    useradd -m -u 1000 -g optimise optimise && \
+    mkdir -p test_files && \
     chown -R optimise:optimise /app/prototype
 
 # Als optimise User ausführen
