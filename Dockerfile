@@ -30,8 +30,6 @@ RUN mkdir -p test_files logs
 # Port für Streamlit
 EXPOSE 8501
 
-# Health Check
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
 # Umgebungsvariablen
 ENV STREAMLIT_SERVER_PORT=8501
